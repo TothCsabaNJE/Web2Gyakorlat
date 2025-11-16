@@ -2,6 +2,14 @@
   "name": "webgyakorlat",
   "version": "1.0.0",
   "description": "",
+  "homepage": "https://github.com/TothCsabaNJE/Web2Gyakorlat#readme",
+  "bugs": {
+    "url": "https://github.com/TothCsabaNJE/Web2Gyakorlat/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TothCsabaNJE/Web2Gyakorlat.git"
+  },
   "license": "ISC",
   "author": "",
   "type": "commonjs",

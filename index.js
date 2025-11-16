@@ -48,6 +48,7 @@ var connection = mysql.createConnection({
     else 
       console.log("Conection Failed");
 });
+
  
 const customFields={
     usernameField:'uname',
@@ -193,14 +194,30 @@ app.get('/contact',isAuth,(req, res, next) => {
    });
 });
 
+
+//sending a message
+app.post('/contact',(req,res,next)=>{
+    console.log("Inside post");
+    const send=req.body.sender;
+    const mes=req.body.message;
+    connection.query('Insert into messages(sender,message) values(?,?)', [send,mes],function(error, results, fields){
+        if (error) 
+            console.log("Error");
+        else
+            console.log("Successfully Entered");
+            res.redirect('/');
+    });
+})
+
 app.get('/messages',isAuth,(req, res, next) => {
-    admin=false
+    admin=false;
     if(req.isAuthenticated() && req.user.isAdmin==1)
         admin=true
     res.render("messages", {
         isAdmin: admin, username: req.user.username
    });
 });
+
 
 app.get('/crud',isAuth,(req, res, next) => {
     admin=false
