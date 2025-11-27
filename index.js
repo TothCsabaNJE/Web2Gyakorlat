@@ -2,7 +2,6 @@ const passport=require('passport');
 const LocalStrategy=require('passport-local').Strategy;
 const express = require('express');
 const app = express();
-const bodyParser = require("body-parser");
 const mysql = require('mysql2');
 const crypto=require('crypto');
 var session = require('express-session');
@@ -27,8 +26,8 @@ app.use(session({
 
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({
+app.use(express.json());
+app.use(express.urlencoded({
   extended: true
 }));
 app.use(express.static('public'));
@@ -152,6 +151,94 @@ function genPassword(password)
 {
     return crypto.createHash('sha512').update(password).digest('hex');
 }
+
+function queryPromise(query, value){
+    return  new Promise((resolve,reject)=>{
+        connection.query(query, value, (err,result)=>{
+            if(err) reject(err);
+            else resolve(result);
+        })
+    })
+}
+
+//Get all messages - REST API
+app.get("/message-rest", async (req,res)=>{
+    try{
+        const query = "SELECT * FROM messages";
+        const result = await queryPromise(query);
+        res.status(200).send(result);
+    }catch(error){
+        console.error(error);
+        res.status(500).json({message:"Internal Server Error"});
+    }
+});
+
+//Get all db-appropriate data - REST API
+app.get("/db-rest", async (req,res)=>{
+    try{
+        const query = "SELECT * FROM kiosztas INNER JOIN telepules ON adohely=telepules.nev inner join regio ON telepules.megye=regio.megye;";
+        const result = await queryPromise(query);
+        res.status(200).send(result);
+    }catch(error){
+        console.error(error);
+        res.status(500).json({message:"Internal Server Error"});
+    }
+});
+
+//Get specific kiosztas by id - REST API
+app.get("/kiosztas/:id",async(req,res)=>{
+    try{
+        const id=req.params.id;
+        const query="SELECT * FROM kiosztas WHERE az=?";
+        const result=await queryPromise(query,id);
+        res.status(200).send(result);
+    }catch(error){
+        console.error(error);
+        res.status(500).json({message:"Internal Server Error"});
+    }
+});
+
+//Add new kiosztas - REST API
+app.post("/kiosztas",async(req,res)=>{
+    try{
+        const value=req.body;
+        const query="INSERT INTO kiosztas SET?";
+        const result=await queryPromise(query,value);
+        res.status(201).json({message:"Kiosztas added successfully"});
+        console.log(result);
+    }catch(error){
+        console.error(error);
+        res.status(500).json({message:"Internal Server Error"});
+    }
+});
+
+//Update existing kiosztas by id - REST API
+app.put("/kiosztas/:id",async(req,res)=>{
+    try{
+        let id=req.params.id;
+        const query="UPDATE kiosztas SET ? WHERE az=?";
+        const result=await queryPromise(query,[value,id]);
+        res.status(202).json({message:"Kiosztas updated successfully"});
+        console.log(result);
+    }catch(error){
+        console.error(error);
+        res.status(500).json({message:"Internal Server Error"});
+    }
+});
+
+//Delete existing kiosztas by id - REST API
+app.delete("/kiosztas/:id",async(req,res)=>{
+    try{
+        const id=req.params.id;
+        const query="DELETE FROM kiosztas WHERE az=?";
+        const result=await queryPromise(query,id);
+        res.status(200).json({message:"Kiosztas deleted successfully"});
+        
+    }catch(error){
+        console.error(error);
+        res.status(500).json({message:"Internal Server Error"});
+    }
+});
 
 app.get('/login', (req, res, next) => {
         res.render('login')
