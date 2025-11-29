@@ -1,0 +1,47 @@
+<!-- views/crud_edit.ejs -->
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Kiosztás módosítása</title>
+</head>
+
+<body>
+    <%- include('top', {isAuth: true, isAdmin: isAdmin, userName: username}); %>
+
+        <h1>Kiosztás módosítása (az = <%= record.az %>)</h1>
+
+        <form action="/crud/edit/<%= record.az %>" method="POST">
+            <label>Frekvencia:
+                <input type="number" step="0.01" name="frekvencia" value="<%= record.frekvencia %>" required>
+            </label><br>
+
+            <label>Teljesítmény:
+                <input type="number" step="0.01" name="teljesitmeny" value="<%= record.teljesitmeny %>" required>
+            </label><br>
+
+            <label>Csatorna:
+                <input type="text" name="csatorna" value="<%= record.csatorna %>" required>
+            </label><br>
+
+            <label>Adóhely:
+                <select name="adohely" required>
+                    <% telepulesek.forEach(t=> { %>
+                        <option value="<%= t.nev %>" <%=t.nev===record.adohely ? 'selected' : '' %>>
+                            <%= t.nev %>
+                        </option>
+                        <% }); %>
+                </select>
+            </label><br>
+
+
+            <label>Cím:
+                <input type="text" name="cim" value="<%= record.cim %>">
+            </label><br><br>
+
+            <button type="submit">Mentés</button>
+            <a href="/crud">Mégse</a>
+        </form>
+</body>
+
+</html>

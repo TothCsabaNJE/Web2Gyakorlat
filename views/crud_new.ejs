@@ -1,0 +1,47 @@
+<!-- views/crud_new.ejs -->
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Új kiosztás</title>
+</head>
+
+<body>
+    <%- include('top', {isAuth: true, isAdmin: isAdmin, userName: username}); %>
+
+        <h1>Új kiosztás felvitele</h1>
+
+        <form action="/crud/new" method="POST">
+            <label>Frekvencia:
+                <input type="number" step="0.01" name="frekvencia" required>
+            </label><br>
+
+            <label>Teljesítmény:
+                <input type="number" step="0.01" name="teljesitmeny" required>
+            </label><br>
+
+            <label>Csatorna:
+                <input type="text" name="csatorna" required>
+            </label><br>
+
+            <label>Adóhely:
+                <select name="adohely" required>
+                    <option value="">-- Válassz települést --</option>
+                    <% telepulesek.forEach(t=> { %>
+                        <option value="<%= t.nev %>">
+                            <%= t.nev %>
+                        </option>
+                        <% }); %>
+                </select>
+            </label><br>
+
+            <label>Cím:
+                <input type="text" name="cim">
+            </label><br><br>
+
+            <button type="submit">Mentés</button>
+            <a href="/crud">Mégse</a>
+        </form>
+</body>
+
+</html>

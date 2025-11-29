@@ -1,7 +1,68 @@
+<!-- views/crud.ejs -->
 <html>
-  <head></head>
-  <body>
-     <%- include('top', {isAuth: true, isAdmin: isAdmin, userName: username}); %>
-     <h1>Dashboard for logged in users</h1>
-  </body>
+
+<head>
+  <meta charset="UTF-8">
+  <title>CRUD – kiosztás</title>
+</head>
+
+<body>
+  <%- include('top', {isAuth: true, isAdmin: isAdmin, userName: username}); %>
+
+    <h1>Dashboard for logged in users – Kiosztás lista</h1>
+
+    <p><a href="/crud/new">Új kiosztás felvitele</a></p>
+
+    <table border="1" cellpadding="5" cellspacing="0">
+      <thead>
+        <tr>
+          <th>az</th>
+          <th>frekvencia</th>
+          <th>teljesítmény</th>
+          <th>csatorna</th>
+          <th>adóhely</th>
+          <th>cím</th>
+          <th>Műveletek</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (records && records.length> 0) { %>
+          <% records.forEach(r=> { %>
+            <tr>
+              <td>
+                <%= r.az %>
+              </td>
+              <td>
+                <%= r.frekvencia %>
+              </td>
+              <td>
+                <%= r.teljesitmeny %>
+              </td>
+              <td>
+                <%= r.csatorna %>
+              </td>
+              <td>
+                <%= r.adohely %>
+              </td>
+              <td>
+                <%= r.cim %>
+              </td>
+              <td>
+                <a href="/crud/edit/<%= r.az %>">Módosítás</a>
+                <form action="/crud/delete/<%= r.az %>" method="POST" style="display:inline;"
+                  onsubmit="return confirm('Biztosan törlöd?');">
+                  <button type="submit">Törlés</button>
+                </form>
+              </td>
+            </tr>
+            <% }) %>
+              <% } else { %>
+                <tr>
+                  <td colspan="7">Nincs adat a táblában.</td>
+                </tr>
+                <% } %>
+      </tbody>
+    </table>
+</body>
+
 </html>
