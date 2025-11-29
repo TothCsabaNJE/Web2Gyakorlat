@@ -1,32 +1,73 @@
+<!-- views/db.ejs -->
 <html>
-  <head>
-    <link href="https://getbootstrap.com/docs/5.1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script type="text/javascript" src="ajax.js"></script>
-  </head>
-  <body>
-     <%- include('top', {isAuth: true, isAdmin: isAdmin, userName: username}); %>
-     <div class="container mt-5 mb-5">
-      <div class="mt-3 mb-3">
-        <div class="card">
-          <div class="card-header">Radio Station Data</div>
-          <div class="card-body">
-            <div class="mb-3">
-              <input type="text" id="search" placeholder="Search..." autocomplete="off">
-              <table class="table table-bordered mt-3">
-                <thead>
-                  <th>Id</th>
-                  <th>Csatorna</th>
-                  <th>Adóhely</th>
-                  <th>Megye</th>
-                </thead>
-                <tbody>
 
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-     </div>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <title>Adatbázis – kiosztas keresés</title>
+</head>
+
+<body>
+  <%- include('top', { isAuth: true, isAdmin: isAdmin, userName: username }); %>
+
+    <h1>Kiosztás – keresés az adatbázisban</h1>
+
+    <!-- Kereső űrlap -->
+    <form action="/db" method="GET" style="margin-bottom: 20px;">
+      <label>Keresés (csatorna / adóhely / cím):
+        <input type="text" name="q" value="<%= search %>">
+      </label>
+      <button type="submit">Keresés</button>
+      <a href="/db">Összes rekord</a>
+    </form>
+
+    <table border="1" cellpadding="5" cellspacing="0">
+      <thead>
+        <tr>
+          <th>az</th>
+          <th>frekvencia</th>
+          <th>teljesítmény</th>
+          <th>csatorna</th>
+          <th>adóhely</th>
+          <th>cím</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (records && records.length> 0) { %>
+          <% records.forEach(r=> { %>
+            <tr>
+              <td>
+                <%= r.az %>
+              </td>
+              <td>
+                <%= r.frekvencia %>
+              </td>
+              <td>
+                <%= r.teljesitmeny %>
+              </td>
+              <td>
+                <%= r.csatorna %>
+              </td>
+              <td>
+                <%= r.adohely %>
+              </td>
+              <td>
+                <%= r.cim %>
+              </td>
+            </tr>
+            <% }); %>
+              <% } else { %>
+                <tr>
+                  <td colspan="6">
+                    <% if (search && search.length> 0) { %>
+                      Nincs találat a(z) "<%= search %>" keresésre.
+                        <% } else { %>
+                          Nincs adat a kiosztas táblában.
+                          <% } %>
+                  </td>
+                </tr>
+                <% } %>
+      </tbody>
+    </table>
+</body>
+
 </html>

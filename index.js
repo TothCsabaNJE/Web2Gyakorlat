@@ -260,13 +260,40 @@ app.get('/protected-route', isAuth, (req, res, next) => {
     });
 });
 
-app.get('/db', isAuth, (req, res, next) => {
-    admin = false
-    if (req.isAuthenticated() && req.user.isAdmin == 1)
-        admin = true
-    res.render("db", {
-        isAdmin: admin, username: req.user.username
-    });
+app.get('/db', isAuth, async (req, res, next) => {
+    let admin = false;
+
+    if (req.isAuthenticated && req.isAuthenticated() && req.user.isAdmin == 1)
+        admin = true;
+
+    const search = req.query.q ? req.query.q.trim() : '';
+
+    try {
+        const db = connection.promise();
+
+        let sql = 'SELECT * FROM kiosztas';
+        let params = [];
+
+        if (search) {
+            sql += ' WHERE csatorna LIKE ? OR adohely LIKE ? OR cim LIKE ?';
+            const like = '%' + search + '%';
+            params = [like, like, like];
+        }
+
+        sql += ' ORDER BY az';
+
+        const [rows] = await db.query(sql, params);
+
+        res.render('db', {
+            isAdmin: admin,
+            username: req.user.username,
+            records: rows,
+            search: search
+        });
+    } catch (err) {
+        console.error(err);
+        next(err);
+    }
 });
 
 app.get('/contact', isAuth, (req, res, next) => {
